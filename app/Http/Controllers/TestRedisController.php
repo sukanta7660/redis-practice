@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Blog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redis;
 
 class TestRedisController extends Controller
@@ -34,10 +35,29 @@ class TestRedisController extends Controller
             $storage->zIncrBy('articleViews', $views, 'article:' . $this->id);
         }
 
-        // $views = $storage->get('article:' . $this->id . ':views');
+        $views = $storage->get('article:' . $this->id . ':views');
 
         // return 'This is an article with id: ' . $this->id . '. It has ' . $views . ' views.';
+        $articles = Blog::all();
+        return view('article',compact('article','articles','views'));
+    }
 
-        return view('');
+    public function storeInDb()
+    {
+        $storage = Redis::connection();
+        $cached_data = $storage->zRevRange('articleViews',0,-1);
+
+        foreach ($cached_data as $key => $value) {
+            $id = str_replace('article:', '', $value);
+
+            $views = $storage->get('article:' . $id . ':views');
+
+            $article = Blog::findOrFail($id);
+            $article->view += $views;
+            $article->save();
+        }
+        $storage->flushAll();
+
+        return 'yes! updated';
     }
 }

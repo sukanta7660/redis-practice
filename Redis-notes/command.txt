@@ -1,0 +1,7 @@
+1. redis-cli FLUSHALL
+Ref: https://www.shellhacks.com/redis-delete-all-keys-redis-cli/
+     https://www.shellhacks.com/
+
+2. Artisan Command Schedules:
+Ref: https://youtu.be/x7yQkQMp7Lw
+
