@@ -53,8 +53,8 @@ class ExamController extends Controller
         try {
             $input_start_time = $request->start;
             $input_end_time = $request->end;
-            $start = date('Y-m-d h:i:s', strtotime($input_start_time));
-            $end = date('Y-m-d h:i:s', strtotime($input_end_time));
+            $start = date('Y-m-d H:i:s', strtotime($input_start_time));
+            $end = date('Y-m-d H:i:s', strtotime($input_end_time));
 
             $exam = Exam::create([
                 'title' => $request->title,
@@ -65,8 +65,6 @@ class ExamController extends Controller
                 'end' => $end,
                 'user_id' => auth()->user()->id
             ]);
-
-            dd($exam);
         } catch (QueryException $e) {
             report($e);
         }
@@ -80,9 +78,9 @@ class ExamController extends Controller
      */
     public function show($id)
     {
-        Session::put("nextq",1);
-        Session::put("wrongans",0);
-        Session::put("correctans",0);
+        Session::put("nextq", 1);
+        Session::put("wrongans", 0);
+        Session::put("correctans", 0);
 
 
         $exam = Exam::whereId($id)->with('questions')->first();
@@ -95,7 +93,7 @@ class ExamController extends Controller
             ->with('option')
             ->first();
 
-        return view('admin.exam.details', compact('exam','question'));
+        return view('admin.exam.details', compact('exam', 'question'));
     }
 
     /**

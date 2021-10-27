@@ -33,7 +33,10 @@
                   <div class="card-header">
                      <h3 class="card-title">{{ $exam->title }}</h3>
                      <div class="card-tools">
-                         <h5 class="text-danger" id="displayDiv"></h5>
+                         <h5 class="text-danger text-bold">
+                             Time left:
+                            <span id="demo"></span>
+                         </h5>
                      </div>
                   </div>
                   <div class="card-body">
@@ -74,34 +77,34 @@
 @push('js')
 <script src="{{ asset('js/jquery-3.6.0.min.js') }}"></script>
 <script>
-const COUNTER_KEY = 'my-counter';
 
-function countDown(i, callback) {
-  //callback = callback || function(){};
-  timer = setInterval(function() {
-    minutes = parseInt(i / 60, 10);
-    seconds = parseInt(i % 60, 10);
+    let start = '{{ date('m/d/Y H:i:s',strtotime($exam->start)) }}';
+    let end = '{{ date('m/d/Y H:i:s',strtotime($exam->end)) }}';
+// console.log(end);
+// Set the date we're counting down to
+var countDownDate = new Date(end).getTime();
 
-    minutes = minutes < 10 ? "0" + minutes : minutes;
-    seconds = seconds < 10 ? "0" + seconds : seconds;
 
-    document.getElementById("displayDiv").innerHTML = "Time left:  " + "0:" + minutes + ":" + seconds;
 
-    if ((i--) > 0) {
-      window.sessionStorage.setItem(COUNTER_KEY, i);
-    } else {
-      window.sessionStorage.removeItem(COUNTER_KEY);
-      clearInterval(timer);
-      callback();
-    }
-  }, 1000);
-}
+// Update the count down every 1 second
+var x = setInterval(function() {
 
-window.onload = function() {
-  var countDownTime = window.sessionStorage.getItem(COUNTER_KEY) || 60;
-  countDown(countDownTime, function() {
-    //$('#myModal').modal('show');
-  });
-};
+  var now = new Date().getTime();
+
+  var distance = countDownDate - now;
+
+  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  document.getElementById("demo").innerHTML = hours + "h "
+  + minutes + "m " + seconds + "s ";
+
+  if (distance < 0) {
+    clearInterval(x);
+    document.getElementById("demo").innerHTML = "EXPIRED";
+
+  }
+}, 1000);
 </script>
 @endpush
